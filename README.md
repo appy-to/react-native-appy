@@ -1,22 +1,49 @@
-# react-native-appy
+# Appy for React Native and Expo
 
 ![Appy — Deep links, install attribution and revenue analytics](docs/assets/appy-banner.svg)
 
-**[Start here: short installation guide](QUICKSTART.md)** · [Which names and values do I replace?](SETUP.md)
+Deep links, install attribution and in-app events for React Native and Expo.
 
-> **Source preview:** this package is not published to npm yet. [Build the included example from source](SOURCE_SETUP.md).
+**Source preview** · Expo SDK 54+ · iOS 15.1+ / Android API 21+ · [MIT](LICENSE)
 
-**This is a library for your own app.** Keep the `Appy` SDK/package names in code; use your own app name, identifiers, publishable key and link domain. [Get those values from the dashboard](SETUP.md).
+[Step-by-step setup](QUICKSTART.md) · [Your dashboard values](SETUP.md) · [API reference](#api-reference) · [Support](mailto:support@appy.to)
 
-`react-native-appy` connects a React Native or Expo app to [Appy](https://appy.to) smart links and QR codes on iOS and Android:
+## Quick start
 
-- **Deep links.** Universal Links and App Links on your Appy link domain, and custom-scheme links opened by the Appy redirect page, arrive as an `AppyDeepLink` with the slug, the in-app destination and the link's parameters.
-- **Deferred deep links.** A link tapped before the app was installed is delivered on the first launch after install, through the same listener.
-- **Install attribution.** The first launch tells you which link, campaign or ad network brought the install, or that it was organic.
-- **Events.** In-app events and revenue, de-duplicated by your purchase ID and credited to the link that brought the install.
-- **Share links.** `https://<your-domain>/<slug>?…` URLs for links in your account.
+### 1. Get your app's key and domain
 
-The package is an [Expo module](https://docs.expo.dev/modules/overview/) over the native [Appy iOS SDK](https://appy.to/docs/sdk/ios) and [Appy Android SDK](https://appy.to/docs/sdk/android). It works in Expo apps and in bare React Native apps, and comes with a config plugin that sets up Associated Domains and Android App Links from `app.json`.
+In the [Appy dashboard](https://appy.to), open **Apps & SDK → New app**. Register your own app, then copy **Publishable key** and **Link domain** from **SDK setup**. The hosted SDK features require an Enterprise plan.
+
+Replace `YOUR_PUBLISHABLE_KEY` and `your-app.appy.to` below with those two values. Keep the SDK/package names as written. [Help finding your values](SETUP.md).
+
+### 2. Install
+
+The package is not published on npm yet. Use [Source setup](SOURCE_SETUP.md) to download the module and native SDKs, then run the included example. Use a development build; Expo Go does not include the required native code.
+
+### 3. Configure and connect links
+
+At module scope in your app's entry file:
+
+```ts
+import Appy from 'react-native-appy';
+
+Appy.configure({
+  publishableKey: 'YOUR_PUBLISHABLE_KEY',
+  linkDomains: ['your-app.appy.to'],
+});
+```
+
+Finish the required setup: [add the Expo config plugin](#2-add-the-config-plugin-expo) or follow [bare React Native setup](#2b-bare-react-native), then [listen for deep links](#4-handle-deep-links).
+
+### 4. Test your first link
+
+Create a link for this dashboard app, install the matching app build and tap the link. Confirm that your deep-link handler receives it before testing fresh installs or adding event tracking. [Follow the complete walkthrough](QUICKSTART.md).
+
+---
+
+## Detailed guide
+
+The sections below cover platform settings, callbacks, events, consent, troubleshooting and the API. Start here when you need a specific integration detail.
 
 ## Requirements
 
