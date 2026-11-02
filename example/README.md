@@ -21,6 +21,14 @@ EXPO_PUBLIC_APPY_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY EXPO_PUBLIC_APPY_LINK_DOMA
 EXPO_PUBLIC_APPY_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY EXPO_PUBLIC_APPY_LINK_DOMAIN=acme.appy.to npx expo run:android
 ```
 
+For an Android build from this source preview, also add the native SDK's local Maven repository to the generated `android/build.gradle`, inside `allprojects { repositories { ... } }`:
+
+```groovy
+maven { url rootProject.file("../../../android/build/local-maven") }
+```
+
+This assumes the source setup directory layout. A published wrapper resolves the native SDK from Maven Central and needs no local Maven entry.
+
 Change `linkDomains` in `app.json`, and `bundleIdentifier` and `package` to an app registered with Appy, to test real Universal Links and App Links.
 
 Open a link while the app runs and again after stopping it:

@@ -1,8 +1,8 @@
 # Add Appy to a React Native or Expo app
 
-**Current availability:** this package is a source preview. It is not published on npm yet. Start with the source example below; a registry install command is not available yet.
+Install `react-native-appy` from npm, then connect it to your app as shown below.
 
-Requires Expo SDK 54+ with a development build, iOS 15.1+ or Android API 21+. The native SDK does not run in Expo Go. [Bare React Native setup](README.md#2b-bare-react-native).
+Requires Expo SDK 54+ with a development build. Use the iOS and Android minimum versions required by your Expo / React Native release. The native SDK does not run in Expo Go. [Bare React Native setup](README.md#2b-bare-react-native).
 
 ## 1. Get the two values for your app
 
@@ -18,24 +18,13 @@ In every snippet below:
 
 The hosted SDK features require an Enterprise plan. You do not need a secret API key or a `curl` registration request for these steps.
 
-## 2. Download and run the source example
+## 2. Install the package
 
-Follow [Source setup](SOURCE_SETUP.md) to clone this package and its native dependencies, then use the [example app instructions](example/README.md).
-
-For an app using Expo prebuild, the plugin configuration looks like this after the package is connected:
-
-```json
-{
-  "expo": {
-    "scheme": "yourapp",
-    "plugins": [
-      ["react-native-appy", { "linkDomains": ["your-app.appy.to"] }]
-    ]
-  }
-}
+```bash
+npx expo install react-native-appy
 ```
 
-Keep `react-native-appy`. Replace the example domain with your dashboard Link domain, and `yourapp` with **your own app's URL scheme**. Create a new development build after changing native configuration; a JavaScript reload is not enough.
+Use a development build; Expo Go cannot load this native module.
 
 ## 3. Paste your key and domain
 

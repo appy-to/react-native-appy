@@ -4,7 +4,7 @@
 
 Deep links, install attribution and in-app events for React Native and Expo.
 
-**Source preview** · Expo SDK 54+ · iOS 15.1+ / Android API 21+ · [MIT](LICENSE)
+**v1.0.0** · Expo SDK 54+ · iOS / Android · [MIT](LICENSE)
 
 [Step-by-step setup](QUICKSTART.md) · [Your dashboard values](SETUP.md) · [API reference](#api-reference) · [Support](mailto:support@appy.to)
 
@@ -18,7 +18,13 @@ Replace `YOUR_PUBLISHABLE_KEY` and `your-app.appy.to` below with those two value
 
 ### 2. Install
 
-The package is not published on npm yet. Use [Source setup](SOURCE_SETUP.md) to download the module and native SDKs, then run the included example. Use a development build; Expo Go does not include the required native code.
+Install from [npm](https://www.npmjs.com/package/react-native-appy):
+
+```bash
+npx expo install react-native-appy
+```
+
+Use a development build; Expo Go cannot load the native code.
 
 ### 3. Configure and connect links
 
@@ -48,15 +54,19 @@ The sections below cover platform settings, callbacks, events, consent, troubles
 ## Requirements
 
 - Expo SDK 54 or later (tested with SDK 58 and React Native 0.88). Bare React Native apps need the `expo` package, added with `npx install-expo-modules@latest`.
-- iOS 15.1 or later, Android 5.0 (API 21) or later.
+- The iOS and Android minimum versions required by your Expo / React Native release. The host framework may require newer OS versions than the underlying Appy native SDK.
 - A development build. Expo Go cannot load the native code.
 - An app registered with Appy and its publishable key (`appy_pk_…`). The SDK endpoints are part of the Appy Enterprise plan; keys on other plans receive `403 plan_required`, which the first launch reports as `{ status: 'failed', error: 'invalidResponse' }`.
 
 ## Install
 
-This is currently a **source preview**. Follow [Build the example from source](SOURCE_SETUP.md) to download this package and its native dependencies. A one-command registry install is not available yet.
+```bash
+npx expo install react-native-appy
+```
 
-After that source setup, the sections below explain how to connect the SDK to your app. Keep the existing native dependency setup from the source guide.
+The package resolves the native SDKs from their public releases. To develop the plugin alongside local native SDK changes, use [Source setup](SOURCE_SETUP.md).
+
+After installation, use the sections below to connect the SDK to your app. Swift Package Manager resolves the public iOS package automatically. If your app uses CocoaPods instead, add `pod 'AppySDK', :git => 'https://github.com/appy-to/appy-ios-sdk.git', :tag => '1.0.0'` inside the app target in `ios/Podfile`.
 
 ## 1. Register your app
 
@@ -88,7 +98,7 @@ Then build again with `npx expo prebuild` or EAS Build. The plugin:
 
 - adds `applinks:your-app.appy.to` to the iOS Associated Domains entitlement;
 - adds an `autoVerify` App Link intent filter for `https://your-app.appy.to` to the main Android activity;
-- connects the iOS `AppySDK` dependency; in the source preview it uses the neighboring iOS SDK checkout;
+- connects the iOS `AppySDK` dependency to its public GitHub release tag;
 - excludes the SDK's state from Android Auto Backup, so a reinstall still gets its first launch. If your app already sets backup rules, prebuild prints a warning with the line to add.
 
 | Option | Default | Meaning |
