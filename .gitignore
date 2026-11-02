@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+build/
+plugin/build/
+*.tgz
+android/.gradle/
+android/build/
+android/.cxx/
+android/local.properties
+*.iml
+.idea/

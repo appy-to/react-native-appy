@@ -1,0 +1,44 @@
+import groovy.json.JsonSlurper
+
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'to.appy.sdk.reactnative'
+version = '1.0.0'
+
+def packageRoot = file('..').canonicalFile
+def nativeSdk = new JsonSlurper().parse(new File(packageRoot, 'native-sdk.json'))
+
+if (nativeSdk.source == 'local') {
+  def localRepository = new File(packageRoot, nativeSdk.android.localRepository).canonicalFile
+  if (!localRepository.isDirectory()) {
+    throw new GradleException(
+      "native-sdk.json uses the local Appy Android SDK, but ${localRepository} does not exist. " +
+        "Run ./gradlew :appy-sdk:publishReleasePublicationToLocalRepository in sdks/android, or set \"source\" to \"published\"."
+    )
+  }
+  repositories {
+    maven { url = localRepository.toURI() }
+  }
+}
+
+android {
+  namespace 'to.appy.sdk.reactnative'
+  defaultConfig {
+    versionCode 1
+    versionName '1.0.0'
+  }
+  testOptions {
+    unitTests.returnDefaultValues = true
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  implementation "${nativeSdk.android.coordinates}:${nativeSdk.version}"
+  testImplementation 'junit:junit:4.13.2'
+}

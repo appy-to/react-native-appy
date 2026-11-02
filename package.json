@@ -1,0 +1,90 @@
+{
+  "name": "react-native-appy",
+  "version": "1.0.0",
+  "description": "Deep links, deferred deep links, install attribution and in-app events for React Native and Expo apps that use Appy smart links and QR codes.",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "build",
+    "src",
+    "!src/__tests__",
+    "plugin/build",
+    "app.plugin.js",
+    "ios",
+    "android",
+    "!android/build",
+    "!android/.gradle",
+    "!android/src/test",
+    "expo-module.config.json",
+    "native-sdk.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "QUICKSTART.md",
+    "docs/assets/appy-banner.svg",
+    "SOURCE_SETUP.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p plugin/tsconfig.json",
+    "clean": "rm -rf build plugin/build",
+    "test": "jest",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p plugin/tsconfig.json --noEmit",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "deep-linking",
+    "deferred-deep-linking",
+    "universal-links",
+    "app-links",
+    "attribution",
+    "dynamic-links",
+    "appy"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appy-to/react-native-appy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appy-to/react-native-appy/issues"
+  },
+  "homepage": "https://appy.to/docs/sdk/react-native",
+  "author": "Appy <support@appy.to> (https://appy.to)",
+  "license": "MIT",
+  "peerDependencies": {
+    "expo": ">=54.0.0",
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "~19.3.0",
+    "babel-preset-expo": "~58.0.15",
+    "expo": "^58.0.11",
+    "jest": "^30.0.0",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "typescript": "~6.0.3"
+  },
+  "jest": {
+    "projects": [
+      {
+        "displayName": "sdk",
+        "testEnvironment": "node",
+        "roots": [
+          "<rootDir>/src"
+        ]
+      },
+      {
+        "displayName": "config-plugin",
+        "testEnvironment": "node",
+        "roots": [
+          "<rootDir>/plugin/src"
+        ]
+      }
+    ]
+  }
+}

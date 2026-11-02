@@ -1,0 +1,10 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["AppyModule"],
+    "appDelegateSubscribers": ["AppyAppDelegateSubscriber"]
+  },
+  "android": {
+    "modules": ["to.appy.sdk.reactnative.AppyModule"]
+  }
+}
