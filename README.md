@@ -2,9 +2,11 @@
 
 ![Appy — Deep links, install attribution and revenue analytics](docs/assets/appy-banner.svg)
 
-**[Start here: short installation guide](QUICKSTART.md)** · [Full documentation](https://appy.to/docs/sdk/react-native)
+**[Start here: short installation guide](QUICKSTART.md)** · [Which names and values do I replace?](SETUP.md)
 
-> Public package release is being prepared. This source tree currently uses local native SDKs; the registry commands below apply after the first verified public release. Use [the source setup](SOURCE_SETUP.md) to build the example, or contact Appy for onboarding.
+> **Source preview:** this package is not published to npm yet. [Build the included example from source](SOURCE_SETUP.md).
+
+**This is a library for your own app.** Keep the `Appy` SDK/package names in code; use your own app name, identifiers, publishable key and link domain. [Get those values from the dashboard](SETUP.md).
 
 `react-native-appy` connects a React Native or Expo app to [Appy](https://appy.to) smart links and QR codes on iOS and Android:
 
@@ -25,18 +27,20 @@ The package is an [Expo module](https://docs.expo.dev/modules/overview/) over th
 
 ## Install
 
-```bash
-npx expo install react-native-appy
-```
+This is currently a **source preview**. Follow [Build the example from source](SOURCE_SETUP.md) to download this package and its native dependencies. A one-command registry install is not available yet.
+
+After that source setup, the sections below explain how to connect the SDK to your app. Keep the existing native dependency setup from the source guide.
 
 ## 1. Register your app
 
-Register the app once under **Apps & SDK** in the Appy dashboard, or with `POST /v1/apps`, with:
+Open **Apps & SDK → New app** in the [Appy dashboard](https://appy.to). Enter your own app name, choose its link subdomain, and select the platforms you ship:
 
-- iOS: your Apple Team ID and bundle ID. Appy then serves the Apple App Site Association file for your link domain.
-- Android: your package name and the SHA-256 fingerprints of every signing certificate, including Google Play's app signing key and, for EAS builds, the EAS credentials. Appy then serves `assetlinks.json`.
+- **iOS:** your Apple Team ID and the Bundle ID from Xcode.
+- **Android:** your `applicationId` and the SHA-256 fingerprints of the signing certificates used for your builds, including Play App Signing for Play Store builds.
 
-You get a publishable key and a link domain such as `acme.appy.to`. The [iOS](https://appy.to/docs/sdk/ios) and [Android](https://appy.to/docs/sdk/android) guides explain each value.
+Select **Register app**. Open **SDK setup** on the app's page and copy the **Publishable key** and **Link domain**. One dashboard app can contain both platforms. [Where to find every value](SETUP.md).
+
+In the examples, replace `YOUR_PUBLISHABLE_KEY` and `your-app.appy.to` with those copied values. Keep the `Appy` class names and package/import names. You do not need a secret API key or a terminal registration request.
 
 ## 2. Add the config plugin (Expo)
 
@@ -45,9 +49,9 @@ In `app.json`, set your URL scheme and add the plugin with your link domains:
 ```json
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "yourapp",
     "plugins": [
-      ["react-native-appy", { "linkDomains": ["acme.appy.to"] }]
+      ["react-native-appy", { "linkDomains": ["your-app.appy.to"] }]
     ]
   }
 }
@@ -55,9 +59,9 @@ In `app.json`, set your URL scheme and add the plugin with your link domains:
 
 Then build again with `npx expo prebuild` or EAS Build. The plugin:
 
-- adds `applinks:acme.appy.to` to the iOS Associated Domains entitlement;
-- adds an `autoVerify` App Link intent filter for `https://acme.appy.to` to the main Android activity;
-- adds the `AppySDK` pod to the iOS Podfile from the Appy iOS SDK Git repository (the CocoaPods trunk no longer accepts new pods);
+- adds `applinks:your-app.appy.to` to the iOS Associated Domains entitlement;
+- adds an `autoVerify` App Link intent filter for `https://your-app.appy.to` to the main Android activity;
+- connects the iOS `AppySDK` dependency; in the source preview it uses the neighboring iOS SDK checkout;
 - excludes the SDK's state from Android Auto Backup, so a reinstall still gets its first launch. If your app already sets backup rules, prebuild prints a warning with the line to add.
 
 | Option | Default | Meaning |
@@ -66,13 +70,13 @@ Then build again with `npx expo prebuild` or EAS Build. The plugin:
 | `ios.developerMode` | `false` | Also add `applinks:<domain>?mode=developer`, so development builds fetch the association file directly from Appy. |
 | `android.excludeFromBackup` | `true` | Add the backup rules described above. |
 
-The `scheme` gives in-app browsers that ignore Universal Links (Instagram, Facebook, many mail apps) a way back into your app: the Appy redirect page opens `acme://…?appy_click_id=…`.
+The `scheme` gives in-app browsers that ignore Universal Links (Instagram, Facebook, many mail apps) a way back into your app: the Appy redirect page opens `yourapp://…?appy_click_id=…`.
 
 ## 2b. Bare React Native
 
 Without prebuild, make the same changes yourself:
 
-1. In Xcode, add the **Associated Domains** capability with `applinks:acme.appy.to`, and your URL scheme under **Info > URL Types**.
+1. In Xcode, add the **Associated Domains** capability with `applinks:your-app.appy.to`, and your URL scheme under **Info > URL Types**.
 2. Add this line inside your app target in `ios/Podfile`, then run `pod install` in `ios/`:
 
    ```ruby
@@ -91,8 +95,8 @@ Call `configure` once, as early as possible, at module scope of your app's entry
 import Appy from 'react-native-appy';
 
 Appy.configure({
-  publishableKey: 'appy_pk_live_…',
-  linkDomains: ['acme.appy.to'],
+  publishableKey: 'YOUR_PUBLISHABLE_KEY',
+  linkDomains: ['your-app.appy.to'],
   logLevel: __DEV__ ? 'debug' : 'error',
 });
 ```
@@ -151,8 +155,8 @@ An `AppyDeepLink` has:
 
 | Property | Meaning |
 |---|---|
-| `url` | The Appy link, for example `https://acme.appy.to/spring?item=42` |
-| `deeplinkUrl` | The in-app destination set on the link, for example `acme://items?item=42` |
+| `url` | The Appy link, for example `https://your-app.appy.to/spring?item=42` |
+| `deeplinkUrl` | The in-app destination set on the link, for example `yourapp://items?item=42` |
 | `slug` | The link's slug, for example `spring` |
 | `parameters` | The link's query parameters, including `utm_*`, without the reserved `appy_` ones |
 | `isDeferred` | `true` when the link was tapped before the app was installed |
@@ -164,13 +168,13 @@ When Appy cannot be reached, a link that opened the app still arrives as `'found
 
 ### Expo Router and React Navigation
 
-React Native's `Linking` also receives every link that opens the app, so Expo Router and React Navigation would try to open `/spring` for `https://acme.appy.to/spring`. Let the Appy listener route those links and tell the router to ignore them. With Expo Router, add `app/+native-intent.tsx`:
+React Native's `Linking` also receives every link that opens the app, so Expo Router and React Navigation would try to open `/spring` for `https://your-app.appy.to/spring`. Let the Appy listener route those links and tell the router to ignore them. With Expo Router, add `app/+native-intent.tsx`:
 
 ```ts
 import { isAppyLink } from 'react-native-appy';
 
 export function redirectSystemPath({ path }: { path: string; initial: boolean }) {
-  return isAppyLink(path, ['acme.appy.to']) ? null : path;
+  return isAppyLink(path, ['your-app.appy.to']) ? null : path;
 }
 ```
 
@@ -188,7 +192,7 @@ if (!(await Appy.handleUrl(url))) {
 
 When someone taps an Appy link without your app installed, Appy remembers the tap and sends them to the store. On the first launch after install the package asks Appy for that link, and the listener receives `'found'` with `isDeferred === true`, or `'notFound'` for an organic install. On Android the store's install referrer carries the link; on iOS Appy matches the install to the tap. The answer comes within `deferredDeepLinkTimeoutMs`, counted from `configure`; until Appy has answered a first launch, later launches ask again.
 
-With `openDeferredDeepLinks: true`, the SDK also opens the deferred link's `deeplinkUrl` (for example `acme://items?item=42`) after calling the listener. Your router receives it through `Linking` like any other link to your scheme, so route deferred links either in the listener or through your router, not both. The SDK opens only URLs your app registered, so it never sends the user to a browser.
+With `openDeferredDeepLinks: true`, the SDK also opens the deferred link's `deeplinkUrl` (for example `yourapp://items?item=42`) after calling the listener. Your router receives it through `Linking` like any other link to your scheme, so route deferred links either in the listener or through your router, not both. The SDK opens only URLs your app registered, so it never sends the user to a browser.
 
 To test, delete the app, tap an Appy link on the same device, install your development build and open it. Every install gets a new random install ID, so there is nothing to reset.
 
@@ -265,15 +269,15 @@ When tracking turns on, the first-launch lookup starts and the deep link and att
 const url = await Appy.buildLink('spring', { ref: referralCode });
 ```
 
-This resolves to `https://acme.appy.to/spring?ref=…` on the first link domain, or `null` before `configure`, without a link domain, or for an invalid slug. The slug must belong to a link in your account.
+This resolves to `https://your-app.appy.to/spring?ref=…` on the first link domain, or `null` before `configure`, without a link domain, or for an invalid slug. The slug must belong to a link in your account.
 
 ## 10. Debugging
 
 Set `logLevel: 'debug'`. On Android run `adb logcat -s Appy`; on iOS filter the Xcode console or Console.app on `subsystem:to.appy.sdk`.
 
 ```bash
-xcrun simctl openurl booted "https://acme.appy.to/spring?item=42"
-adb shell 'am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d "https://acme.appy.to/spring?item=42"'
+xcrun simctl openurl booted "https://your-app.appy.to/spring?item=42"
+adb shell 'am start -W -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d "https://your-app.appy.to/spring?item=42"'
 ```
 
 | Symptom | Check |

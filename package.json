@@ -22,7 +22,8 @@
     "LICENSE",
     "QUICKSTART.md",
     "docs/assets/appy-banner.svg",
-    "SOURCE_SETUP.md"
+    "SOURCE_SETUP.md",
+    "SETUP.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p plugin/tsconfig.json",

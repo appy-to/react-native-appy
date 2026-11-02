@@ -1,62 +1,74 @@
-# React Native and Expo quickstart
+# Add Appy to a React Native or Expo app
 
-**Release status:** npm and the native packages are being prepared. The current source tree uses local native SDK dependencies; the command below is for the verified public release. Do not publish this package while `native-sdk.json` has `source: local`. For a working source checkout, follow [Build the example from public sources](SOURCE_SETUP.md). Contact Appy for current onboarding.
+**Current availability:** this package is a source preview. It is not published on npm yet. Start with the source example below; a registry install command is not available yet.
 
-## 1. Prepare your app
+Requires Expo SDK 54+ with a development build, iOS 15.1+ or Android API 21+. The native SDK does not run in Expo Go. [Bare React Native setup](README.md#2b-bare-react-native).
 
-Requires Expo SDK 54+ with a development build, iOS 15.1+ and Android API 21+. Expo Go cannot load the native SDK. Bare React Native apps need Expo Modules; see [bare setup](README.md#2b-bare-react-native).
+## 1. Get the two values for your app
 
-Register your app in **Apps & SDK**, including iOS Team ID/bundle ID and Android package/signing fingerprints. The SDK endpoints require Enterprise. Copy the publishable key and link domain.
+In the [Appy dashboard](https://appy.to), open **Apps & SDK → New app**, register your own app, and open its **SDK setup** card. Copy **Publishable key** and **Link domain**. If it is already registered, open that app instead of creating another one.
 
-## 2. Install after public release
+[Which dashboard fields do I fill in?](SETUP.md#1-add-your-app-in-the-dashboard)
 
-```bash
-npx expo install react-native-appy
-```
+In every snippet below:
 
-In `app.json`, replace the example domain and scheme:
+- Replace `YOUR_PUBLISHABLE_KEY` with the **entire key** copied from the dashboard.
+- Replace `your-app.appy.to` with the **Link domain** copied from the dashboard.
+- Keep names such as `Appy`, `AppySDK` and the package imports. They name the library you are adding; your own app keeps its name and identifiers.
+
+The hosted SDK features require an Enterprise plan. You do not need a secret API key or a `curl` registration request for these steps.
+
+## 2. Download and run the source example
+
+Follow [Source setup](SOURCE_SETUP.md) to clone this package and its native dependencies, then use the [example app instructions](example/README.md).
+
+For an app using Expo prebuild, the plugin configuration looks like this after the package is connected:
 
 ```json
 {
   "expo": {
     "scheme": "yourapp",
     "plugins": [
-      ["react-native-appy", { "linkDomains": ["YOUR_SUBDOMAIN.appy.to"] }]
+      ["react-native-appy", { "linkDomains": ["your-app.appy.to"] }]
     ]
   }
 }
 ```
 
-Create a new development build after applying the plugin; a JavaScript reload does not apply native configuration. See the [full setup](README.md#2-add-the-config-plugin-expo).
+Keep `react-native-appy`. Replace the example domain with your dashboard Link domain, and `yourapp` with **your own app's URL scheme**. Create a new development build after changing native configuration; a JavaScript reload is not enough.
 
-## 3. Configure once
+## 3. Paste your key and domain
 
-At module scope in your app's entry file:
+Configure once at module scope in your app's entry file:
 
 ```ts
 import Appy from 'react-native-appy';
 
 Appy.configure({
-  publishableKey: 'appy_pk_REPLACE_WITH_YOUR_PUBLISHABLE_KEY',
-  linkDomains: ['YOUR_SUBDOMAIN.appy.to'],
+  publishableKey: 'YOUR_PUBLISHABLE_KEY',
+  linkDomains: ['your-app.appy.to'],
 });
 ```
 
-## 4. Receive links
+`Appy` is the imported library object. It does not rename your app.
 
-In a long-lived root component:
+## 4. Choose which screen to open
+
+Import `useEffect` from `react` at the top of your file. Inside a long-lived root component:
 
 ```ts
 useEffect(() => {
   const subscription = Appy.addDeepLinkListener((result) => {
     if (result.status === 'found') {
-      // Route using result.link.slug and result.link.parameters.
+      // Use result.link.slug and result.link.parameters in your app's navigation.
     }
   });
   return () => subscription.remove();
 }, []);
 ```
 
-Import `useEffect` from `react`. Tap an Appy link on a device and verify the callback and dashboard, then test a fresh install through the link. Deferred matching depends on platform and available signals.
+## 5. Test a real link
 
-Use only publishable keys, validate route parameters, and keep debug logging off in production. See the [example app](example/README.md) and [full guide](README.md) for consent, events and attribution.
+Create a link for the dashboard app whose key and domain you copied, install the matching development build, and tap the link. Check the callback before trying a fresh-install test.
+
+The [full guide](README.md) covers events, consent and attribution. The [replacement table](SETUP.md#2-know-which-values-to-replace) explains every example name.
